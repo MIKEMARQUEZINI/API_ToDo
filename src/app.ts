@@ -26,8 +26,6 @@ app.post('/tarefas', (req: Request, res: Response) => {
   res.status(201).json(novaTarefa);
 });
 
-
-//?TODO = revisar - contêm Bug
 app.put('/tarefas/:id', (req: Request, res: Response) => {
   const { id } = req.params;
   const { titulo } = req.body;
@@ -36,22 +34,20 @@ app.put('/tarefas/:id', (req: Request, res: Response) => {
 
   if (procureTarefa) {
     procureTarefa.titulo = titulo;
-    res.json(procureTarefa);
+    return res.json(procureTarefa);
   }
   res.status(404).json({ message: 'Erroou! Tarefa inexistente parceiro' });
 });
 
-
-//TODO = revisar - contêm Bug
 app.delete('/tarefas/:id', (req: Request, res: Response) => {
   const { id } = req.params;
   const pesquisarOID = tarefas.findIndex(
-    (taref) => taref.id === parseInt(id, 1),
+    (taref) => taref.id === parseInt(id, 10),
   );
 
   if (pesquisarOID !== -1) {
     const [deleteOId] = tarefas.splice(pesquisarOID, 10);
-    res.json(deleteOId);
+    return res.json(deleteOId);
   }
   res.status(404).json({
     message:
