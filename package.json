@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint src/**/*.ts",
-    "start": "node app.js",
+    "start": "npx tsc && node dist/app.js",
     "dev": "nodemon app.js"
   },
   "author": "",
