@@ -9,45 +9,45 @@ const PORT = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
-let tarefas: { id: number; titulo: string }[] = [];
+let tasks: { id: number; title: string }[] = [];
 
-app.get('/tarefas', (req: Request, res: Response) => {
-  res.json(tarefas);
+app.get('/tasks', (req: Request, res: Response) => {
+  res.json(tasks);
 });
 
-app.get('/tarefas/:id', (req: Request, res: Response) => {
-  res.json(tarefas);
+app.get('/tasks/:id', (req: Request, res: Response) => {
+  res.json(tasks);
 });
 
-app.post('/tarefas', (req: Request, res: Response) => {
-  const { titulo } = req.body;
-  const novaTarefa = { id: tarefas.length + 1, titulo };
-  tarefas.push(novaTarefa);
-  res.status(201).json(novaTarefa);
+app.post('/tasks', (req: Request, res: Response) => {
+  const { title } = req.body;
+  const newTask = { id: tasks.length + 1, title };
+  tasks.push(newTask);
+  res.status(201).json(newTask);
 });
 
-app.put('/tarefas/:id', (req: Request, res: Response) => {
+app.put('/tasks/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const { titulo } = req.body;
+  const { title } = req.body;
 
-  const procureTarefa = tarefas.find((taref) => taref.id === parseInt(id, 10));
+  const searchTask = tasks.find((taref) => taref.id === parseInt(id, 10));
 
-  if (procureTarefa) {
-    procureTarefa.titulo = titulo;
-    return res.json(procureTarefa);
+  if (searchTask) {
+    searchTask.title = title;
+    return res.json(searchTask);
   }
   res.status(404).json({ message: 'Erroou! Tarefa inexistente parceiro' });
 });
 
-app.delete('/tarefas/:id', (req: Request, res: Response) => {
+app.delete('/tasks/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const pesquisarOID = tarefas.findIndex(
+  const searchId = tasks.findIndex(
     (taref) => taref.id === parseInt(id, 10),
   );
 
-  if (pesquisarOID !== -1) {
-    const [deleteOId] = tarefas.splice(pesquisarOID, 10);
-    return res.json(deleteOId);
+  if (searchId !== -1) {
+    const [deleteId] = tasks.splice(searchId, 10);
+    return res.json(deleteId);
   }
   res.status(404).json({
     message:
