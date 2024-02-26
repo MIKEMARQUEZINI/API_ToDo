@@ -7,6 +7,7 @@ const app: Application = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
+// Por que está usando CORS? Pra que ele serve?
 app.use(cors());
 
 let tasks: { id: number; title: string }[] = [];
@@ -16,9 +17,28 @@ app.get('/tasks', (req: Request, res: Response) => {
 });
 
 app.get('/tasks/:id', (req: Request, res: Response) => {
-  res.json(tasks);
+  try {
+    const { id } = req.params;
+
+    const task = tasks.find((t) => t.id === parseInt(id));
+
+    if (task) {
+      return res.status(200).json(task);
+    }
+    return res.status(404).json({ message: 'ID Not Found! Try again' });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+  /*
+    Aqui quero apenas uma task, não a lista inteira.
+    */
 });
 
+/*
+    Estou fazendo a request enviando o body vazio e mesmo assim
+    a task é salva na lista. Por que salvar um todo vazio?
+*/
 app.post('/tasks', (req: Request, res: Response) => {
   const { title } = req.body;
   const newTask = { id: tasks.length + 1, title };
@@ -26,6 +46,10 @@ app.post('/tasks', (req: Request, res: Response) => {
   res.status(201).json(newTask);
 });
 
+/*
+    Estou fazendo a request enviando o body vazio e mesmo assim
+    a task é atualizada na lista. Por que salvar um todo vazio?
+*/
 app.put('/tasks/:id', (req: Request, res: Response) => {
   const { id } = req.params;
   const { title } = req.body;
@@ -36,25 +60,30 @@ app.put('/tasks/:id', (req: Request, res: Response) => {
     searchTask.title = title;
     return res.json(searchTask);
   }
-  res.status(404).json({ message: 'Erroou! Tarefa inexistente parceiro' });
+  res
+    .status(404)
+    .json({ message: 'Task not found. Please check the provided ID.' });
 });
 
+/*
+    Se eu tiver uma lista com 10 task e pedir para deletar a task 02
+    a aplicação irá deletar as tasks: 2,3,4,5,6,7,8,9,10, ao invés de só
+    a task 02
+
+*/
 app.delete('/tasks/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const searchId = tasks.findIndex(
-    (taref) => taref.id === parseInt(id, 10),
-  );
+  const searchId = tasks.findIndex((taref) => taref.id === parseInt(id, 10));
 
   if (searchId !== -1) {
-    const [deleteId] = tasks.splice(searchId, 10);
+    const [deleteId] = tasks.splice(searchId, 1);
     return res.json(deleteId);
   }
   res.status(404).json({
-    message:
-      'Erroou! Parece que vai precisar pesquisar a lista para ver os elementos',
+    message: 'Error! Task not found. Please check the provided ID.',
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando: ✔️ `);
+  console.log(`Server is runing: ✔ `);
 });
