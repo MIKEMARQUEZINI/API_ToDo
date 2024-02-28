@@ -1,13 +1,13 @@
 import bodyParser = require('body-parser');
 import cors = require('cors');
 import { Application, Request, Response } from 'express';
+import { eCrud, eStatusError } from './enum/status-enum';
 import express = require('express');
 
 const app: Application = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-// Por que está usando CORS? Pra que ele serve?
 app.use(cors());
 
 let tasks: { id: number; title: string }[] = [];
@@ -23,16 +23,17 @@ app.get('/tasks/:id', (req: Request, res: Response) => {
     const task = tasks.find((t) => t.id === parseInt(id));
 
     if (!task) {
-      return res.status(404).json({ message: 'ID Not Found! Try again' });
+      return res
+        .status(404)
+        .json({ message: `ID ${eStatusError.Error404}! Try again ` });
     }
-    return res.status(200).json(task);
+    return res
+      .status(200)
+      .json({ message: `${eCrud.READ} ${JSON.stringify(task)}` });
   } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: `${eStatusError.Error500}` });
   }
-  /*
-    Aqui quero apenas uma task, não a lista inteira.
-    */
 });
 
 app.post('/tasks', (req: Request, res: Response) => {
@@ -40,20 +41,18 @@ app.post('/tasks', (req: Request, res: Response) => {
     const { title } = req.body;
 
     if (!title || title.trim() === '') {
-      return res.status(400).json({ message: 'Title cannot be empty' });
+      return res.status(404).json({ message: 'Title cannot be empty' });
     }
 
     const newTask = { id: tasks.length + 1, title };
     tasks.push(newTask);
-    res.status(201).json(newTask);
+    res
+      .status(201)
+      .json({ message: `${eCrud.CREATE} ${JSON.stringify(newTask)}` });
   } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: `${eStatusError.Error500}` });
   }
-  /*
-    Estou fazendo a request enviando o body vazio e mesmo assim
-    a task é salva na lista. Por que salvar um ToDo vazio?
-*/
 });
 
 app.put('/tasks/:id', (req: Request, res: Response) => {
@@ -69,19 +68,17 @@ app.put('/tasks/:id', (req: Request, res: Response) => {
 
     if (searchTask) {
       searchTask.title = title;
-      return res.json(searchTask);
+      return res.json({
+        message: `${eCrud.UPDATED} ${JSON.stringify(searchTask)}`,
+      });
     }
-    res
-      .status(404)
-      .json({ message: 'Task not found. Please check the provided ID.' });
+    res.status(404).json({
+      message: `${eStatusError.Error404}. Please check the provided ID.`,
+    });
   } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: `${eStatusError.Error500}` });
   }
-  /*
-    Estou fazendo a request enviando o body vazio e mesmo assim
-    a task é atualizada na lista. Por que salvar um ToDo vazio?
-*/
 });
 
 app.delete('/tasks/:id', (req: Request, res: Response) => {
@@ -91,22 +88,17 @@ app.delete('/tasks/:id', (req: Request, res: Response) => {
 
     if (searchId !== -1) {
       const [deleteId] = tasks.splice(searchId, 1);
-      return res.json(deleteId);
+      return res.json({
+        message: `${eCrud.DELETED} ${JSON.stringify(deleteId)}`,
+      });
     }
     res.status(404).json({
-      message: 'Error! Task not found. Please check the provided ID.',
+      message: `${eStatusError.Error404}. Please check the provided ID.`,
     });
   } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: `${eStatusError.Error500}` });
   }
-
-  /*
-    Se eu tiver uma lista com 10 task e pedir para deletar a task 02
-    a aplicação irá deletar as tasks: 2,3,4,5,6,7,8,9,10, ao invés de só
-    a task 02
-
-*/
 });
 
 app.listen(PORT, () => {
