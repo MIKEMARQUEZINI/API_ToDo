@@ -1,60 +1,128 @@
 import bodyParser = require('body-parser');
 import cors = require('cors');
 import { Application, Request, Response } from 'express';
+import { HttpStatus, eCrud, eStatusError } from './enum/status-enum';
 import express = require('express');
 
 const app: Application = express();
 const PORT = 3000;
+interface Task {
+  id: number;
+  title: string;
+}
 
 app.use(bodyParser.json());
 app.use(cors());
 
-let tasks: { id: number; title: string }[] = [];
+let tasks: Task[] = [];
 
 app.get('/tasks', (req: Request, res: Response) => {
   res.json(tasks);
 });
 
 app.get('/tasks/:id', (req: Request, res: Response) => {
-  res.json(tasks);
+  try {
+    const { id } = req.params;
+    const taskId = parseInt(id, 10);
+    const task = tasks.find((t) => t.id === taskId);
+
+    if (!task) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: `ID ${eStatusError.Error404}! Try again ` });
+    }
+
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: `${eCrud.READ} ${JSON.stringify(task)}` });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: `${eStatusError.Error500}` });
+  }
 });
 
 app.post('/tasks', (req: Request, res: Response) => {
-  const { title } = req.body;
-  const newTask = { id: tasks.length + 1, title };
-  tasks.push(newTask);
-  res.status(201).json(newTask);
+  try {
+    const { title } = req.body;
+
+    if (!title || title.trim() === '') {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'Title cannot be empty' });
+    }
+
+    const newTask: Task = { id: tasks.length + 1, title };
+    tasks.push(newTask);
+    res
+      .status(HttpStatus.CREATED)
+      .json({ message: `${eCrud.CREATE} ${JSON.stringify(newTask)}` });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: `${eStatusError.Error500}` });
+  }
 });
 
 app.put('/tasks/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { title } = req.body;
+  try {
+    const { id } = req.params;
+    const { title } = req.body;
+    const taskId = parseInt(id, 10);
 
-  const searchTask = tasks.find((taref) => taref.id === parseInt(id, 10));
+    if (!title || title.trim() === '') {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'Title cannot be empty' });
+    }
 
-  if (searchTask) {
-    searchTask.title = title;
-    return res.json(searchTask);
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+
+    if (taskIndex !== -1) {
+      tasks[taskIndex].title = title;
+      return res.json({
+        message: `${eCrud.UPDATED} ${JSON.stringify(tasks[taskIndex])}`,
+      });
+    }
+
+    res.status(HttpStatus.NOT_FOUND).json({
+      message: `${eStatusError.Error404}. Please check the provided ID.`,
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: `${eStatusError.Error500}` });
   }
-  res.status(404).json({ message: 'Erroou! Tarefa inexistente parceiro' });
 });
 
 app.delete('/tasks/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  const searchId = tasks.findIndex(
-    (taref) => taref.id === parseInt(id, 10),
-  );
+  try {
+    const { id } = req.params;
+    const taskId = parseInt(id, 10);
 
-  if (searchId !== -1) {
-    const [deleteId] = tasks.splice(searchId, 10);
-    return res.json(deleteId);
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
+
+    if (taskIndex !== -1) {
+      const deletedTask = tasks.splice(taskIndex, 1)[0];
+      return res.json({
+        message: `${eCrud.DELETED} ${JSON.stringify(deletedTask)}`,
+      });
+    }
+
+    res.status(HttpStatus.NOT_FOUND).json({
+      message: `${eStatusError.Error404}. Please check the provided ID.`,
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: `${eStatusError.Error500}` });
   }
-  res.status(404).json({
-    message:
-      'Erroou! Parece que vai precisar pesquisar a lista para ver os elementos',
-  });
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando: ✔️ `);
+  console.log(`Server is running: ✔`);
 });
