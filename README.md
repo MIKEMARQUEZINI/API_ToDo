@@ -25,10 +25,11 @@ This project was aimed more at applying basic concepts that can guide you or eve
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `api_key` | `string` | **Required**. Your API key |
+
 <br>
 
 ```bash
-curl http://localhost:{$PORT}/tarefas
+curl http://localhost:3000/tasks
 ```
 
 #### READ task
@@ -38,10 +39,11 @@ curl http://localhost:{$PORT}/tarefas
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `number` | **Required**. Id of item to fetch |
+
 <br>
 
 ```bash
-curl http://localhost:{$PORT}/tarefas/{id}
+curl http://localhost:3000/tasks/{id}
 ```
 
 #### CREATE task
@@ -51,10 +53,11 @@ curl http://localhost:{$PORT}/tarefas/{id}
 | Parameter | Type     | Description                                   |
 | :-------- | :------- | :-------------------------------------------- |
 | `titulo`  | `string` | **Required**. title of the item to be created |
+
 <br>
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"titulo": "Nova Tarefa"}' http://localhost:{$PORT}/tarefas
+curl -X POST -H "Content-Type: application/json" -d '{"title": "Nova Tarefa"}' http://localhost:3000/tasks
 ```
 
 #### UPDATE task
@@ -65,10 +68,11 @@ curl -X POST -H "Content-Type: application/json" -d '{"titulo": "Nova Tarefa"}' 
 | :-------- | :------- | :--------------------------------------------- |
 | `id`      | `number` | **Required**. Id of item to fetch              |
 | `title`   | `number` | **Required**. tTitle of the item to be updated |
+
 <br>
 
 ```bash
-curl -X PUT -H "Content-Type: application/json" -d '{"titulo": "Novo Título"}' http://localhost:{$PORT}/tarefas/{id}
+curl -X PUT -H "Content-Type: application/json" -d '{"title": "Novo Título"}' http://localhost:3000/tasks/{id}
 ```
 
 #### DELETE task
@@ -80,7 +84,7 @@ curl -X PUT -H "Content-Type: application/json" -d '{"titulo": "Novo Título"}' 
 | `id`      | `number` | **Required**. Id of item to delete |
 
 ```bash
-curl -X DELETE http://localhost:{$PORT}/tarefas/{id}
+curl -X DELETE http://localhost:3000/tasks/{id}
 ```
 
 ## Run Locally

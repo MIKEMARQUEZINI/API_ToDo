@@ -3,13 +3,6 @@ export enum eStatusError {
   Error500 = 'Internal server error',
 }
 
-export enum eCrud {
-  CREATE = 'Tasks created!',
-  READ = 'Tasks found',
-  UPDATED = 'Tasks updated!',
-  DELETED = 'Tasks deleted!',
-}
-
 export enum HttpStatus {
   OK = 200,
   CREATED = 201,
