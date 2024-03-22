@@ -5,6 +5,9 @@
   "main": "main.ts",
   "scripts": {
     "test": "jest",
+    "jest": {
+      "verbose": true
+    },
     "lint": "eslint src/**/*.ts",
     "start": "npx tsc && node dist/main.js",
     "dev": "nodemon main.js"

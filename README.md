@@ -20,11 +20,7 @@ This project was aimed more at applying basic concepts that can guide you or eve
 
 #### READ all tasks
 
-- GET /tarefas
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `api_key` | `string` | **Required**. Your API key |
+- GET /tasks
 
 <br>
 
@@ -34,7 +30,7 @@ curl http://localhost:3000/tasks
 
 #### READ task
 
-- GET /tarefas/{ID}
+- GET /tasks/{ID}
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
@@ -48,11 +44,11 @@ curl http://localhost:3000/tasks/{id}
 
 #### CREATE task
 
-- POST /tarefas
+- POST /tasks
 
 | Parameter | Type     | Description                                   |
 | :-------- | :------- | :-------------------------------------------- |
-| `titulo`  | `string` | **Required**. title of the item to be created |
+| `title`  | `string` | **Required**. title of the item to be created |
 
 <br>
 
@@ -62,12 +58,12 @@ curl -X POST -H "Content-Type: application/json" -d '{"title": "Nova Tarefa"}' h
 
 #### UPDATE task
 
-- PUT /tarefas/{ID}
+- PUT /tasks/{ID}
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
 | `id`      | `number` | **Required**. Id of item to fetch              |
-| `title`   | `number` | **Required**. tTitle of the item to be updated |
+| `title`   | `string` | **Required**. tTitle of the item to be updated |
 
 <br>
 
@@ -77,7 +73,7 @@ curl -X PUT -H "Content-Type: application/json" -d '{"title": "Novo Título"}' h
 
 #### DELETE task
 
-- DELETE /tarefas/{ID}
+- DELETE /tasks/{ID}
 
 | Parameter | Type     | Description                        |
 | :-------- | :------- | :--------------------------------- |
@@ -110,5 +106,5 @@ Install dependencies
 Start the server
 
 ```bash
-   npx tsc && node dist/app.js
+   npm run start
 ```
