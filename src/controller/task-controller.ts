@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { HttpStatus, eStatusError } from '../enum/status-enum';
-import { TaskService } from '../service/task-service';
+import { Task, TaskService } from '../service/task-service';
 
 export class TaskController {
-  taskService = new TaskService();
+  constructor(private readonly tasks: Task[]) {}
+  taskService = new TaskService(this.tasks);
 
   public async getTasks(req: Request, res: Response): Promise<void> {
     try {
@@ -61,13 +62,11 @@ export class TaskController {
 
       const updatedTask = await this.taskService.updateTask(taskId, title);
 
-      if (updatedTask) {
-        res.json(updatedTask);
-      }
-
-      res.status(HttpStatus.NOT_FOUND).json({
-        message: `${eStatusError.Error404}. Please check the provided ID.`,
-      });
+      updatedTask
+        ? res.json(updatedTask)
+        : res.status(HttpStatus.NOT_FOUND).json({
+            message: `${eStatusError.Error404}. Please check the provided ID.`,
+          });
     } catch (err: any) {
       console.error(err);
       res
