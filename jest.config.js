@@ -1,5 +1,6 @@
 module.exports = {
   testEnvironment: 'node',
+  preset: "ts-jest",
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
